@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>YesToSlide</title>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="icon" href="../images/favicon.png" type="image/png" sizes="16x16">
+      
+  
+    </head>
+  
+
+
+  <body style="overflow:hidden;height: 100vh;background-color: black;">
+  
+ 
+<center>
+  <div id="presentation_full_size" class="d-none1" style="position:absolute;width: 100vw;height:100vh;overflow: hidden;background-color: transparent;" >
+  <iframe id="presentation_src" src="" frameborder="0" style="width:100%;height:100%;overflow: hidden;background-color: transparent;" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true">
+  </iframe>
+   
+  <button   style="display:none;position:absolute;top:8px;right:5px; font-size: 30px;font-weight: bold;background-color: transparent;color:white;border:none" onclick="close_presentation()" >X</button>--
+  <button  id="repeat_icon"  style="display:none;position: absolute;left:10px;top:10px; font-size: 30px;font-weight: bold;background-color: transparent;color:white;border:none" onclick="looping_image()" ><i class="bi bi-file-play-fill"></i></button>
+  <button  id="stop_repeat_icon" style="display:none;position: absolute;left:10px;top:10px; font-size: 30px;font-weight: bold;background-color: transparent;color:white;border:none" onclick="stop_looping_image()" ><i class="bi bi-pause-btn-fill"></i></button>
+       
+  </div>
+  
+  
+</center>
+     
+    
+   
+    
+  
+  <script>
+
+  
+
+  window.onload = function()
+  {
+    var url_string = window.location.href;
+    //url_string = "https://yestoslide.com/main/empty/yestoslide_loop_casting.html?deckId=12324XYsmKZKTiQstpsLsvpcBtL1v0OOWsH_9iQc4jvQ&img=https://lh6.googleusercontent.com/7HJtFE88aTfLwJPLmQFzF_rI4Gp_aPD6FYLmVu7mJ4K_z4ThxAmIclaXdjW1XceDP8vm369Qqv3dM6Ru30eJfEftWEnsqxi0lOUwbiiFjC4kthWnUyjF5wQk9l-cg7Pjk1VjwdGFs834r9DHEBfU6S5J7dPupvw&msg=xx&name=mobile&replies=undefined&options=%7B%22show_msg%22%3Atrue%2C%22show_reply%22%3Afalse%2C%22show_name%22%3Afalse%2C%22show_blur%22%3Afalse%2C%22show_qrcode%22%3Atrue%2C%22qr_url%22%3A%22https%3A%2F%2Fyestoslide.com%2Findex_sns.html%3FuniqueKey%3D753559732%26deckId%3D12324XYsmKZKTiQstpsLsvpcBtL1v0OOWsH_9iQc4jvQ%22%2C%22bgm%22%3A%22CcAqoRmQWhA%22%7D";
+    var params = url_string.split("yestoslide_loop_casting.html");
+    //console.log(params);
+
+    if(params.length == 2)
+    {
+      document.getElementById("presentation_src").src = "https://yestoslide.com/main/empty/index__arbitrary_image_auto_play.html"+params[1];
+    }
+    
+    
+  }
+</script>
+
+
+  </body>
+</html>

@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://code.jquery.com/jquery-latest.js" type="text/javascript"></script>
+<script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-database.js"></script>
+
+
+<style>
+body {
+  background-color:black;
+}
+#blurDIV {
+  height:100vh;
+  width:100vw;
+  
+}
+.blur_img { 
+  filter: blur(50px);
+}
+
+
+.blur_img{
+        width: 100%;
+        height:100%;
+        object-fit: cover;
+        object-position: center;
+    }
+
+    .image-holder {
+    width: 100%;
+        height:100vh;
+        overflow: hidden;
+}
+
+.main_img{
+        width: 100%;
+        height:100%;
+        object-fit: contain;
+        object-position: center;
+    }
+
+ 
+</style>
+</head>
+<body style="overflow: hidden;">
+
+
+<div class="image-holder" style="position: relative;background-color: transparent;">
+    <div id="blurDIV"  style="display:block;position: absolute;z-index: 1;">
+        <img class="blur_img" id="myblur" src="black.jpg" style="visibility: hidden;" >
+        <img id="imgurl" class="main_img" src="./starting.jpg"  style="visibility:vsible;cursor: pointer; position:absolute;top:0px;left:0px;right:0px;bottom:0px"/>
+        <div id="qrcode" style="visibility: hidden;border-style: solid;border-color: coral; position: absolute;top:40%;right:3%;"></div>
+        <div id="msg" style="visibility: hidden; position: absolute;top:10px;right:40px; background-color: #000;color: #fff;opacity: .7;"></div>
+        <div id="marquee_container" style="visibility: hidden; position: absolute;bottom:30px;left:30%;right:30%; background-color: #000;color: #fff;opacity: .7;">
+            <marquee width="100%" direction="right" id="replies"></marquee>
+            
+        </div>
+    </div>
+    
+    
+    
+    
+</div>
+
+<script type="text/javascript">
+
+var url = "https://script.google.com/macros/s/AKfycbwtG351vIIVrAt607hzlTdX3_yNQ6zVW9xoqSS6qKkAQAP0pmy7mUcNrFI-7pjRSX8/exec";
+var options ={};
+var deckId = "";
+var current_slideId = "";
+var current_bgmId = "";
+function get_description(callback)
+{
+    var http = new XMLHttpRequest();
+    
+    
+     
+      var params = "get_description=" + deckId;
+    
+      //var params = info ;
+      //console.log(params);
+      
+          
+      http.open("POST", url, true);
+    
+      //Send the proper header information along with the request
+      http.setRequestHeader("Content-type", "application/x-www-form-urlencoded;");
+    
+      //Call a function when the state changes.
+      http.onreadystatechange = function() {
+          if (http.readyState==4) {
+          
+            //console.log(http.responseText);
+            
+            if(http.responseText.indexOf("error:") != -1)
+            {
+              //var lists = JSON.parse(http.responseText);
+              //console.log(http.responseText);
+              callback("");
+            }
+              
+            else
+            {
+              var desc = JSON.parse(http.responseText);
+              //console.log(lists);
+              callback(desc);
+              //callback(http.responseText);
+            }
+              
+    
+            
+            
+          
+          }
+      } // end callback
+    
+      http.send(params);
+}
+function get_incarved_in_one_slide(slideId,callback)
+{
+      
+          
+              
+      var http = new XMLHttpRequest();
+    
+    
+     
+      var params = "get_incarved_in_one_slide=" + deckId + "&slideId="+slideId;
+    
+      //var params = info ;
+      //console.log(params);
+      
+          
+      http.open("POST", url, true);
+    
+      //Send the proper header information along with the request
+      http.setRequestHeader("Content-type", "application/x-www-form-urlencoded;");
+    
+      //Call a function when the state changes.
+      http.onreadystatechange = function() {
+          if (http.readyState==4) {
+          
+            //console.log(http.responseText);
+            
+            if(http.responseText.indexOf("error:") != -1)
+            {
+              //var lists = JSON.parse(http.responseText);
+              //console.log(http.responseText);
+              callback([]);
+            }
+              
+            else
+            {
+              var data = JSON.parse(http.responseText);
+              //console.log(lists);
+              callback(data);
+              //callback(http.responseText);
+            }
+              
+    
+            
+            
+          
+          }
+      } // end callback
+    
+      http.send(params);
+}
+function get_all_slideIDs(callback)
+{
+    
+
+          
+              
+      var http = new XMLHttpRequest();
+    
+    
+     
+      var params = "get_all_slideIds_from_presentation=" + deckId;
+    
+      //var params = info ;
+      console.log(params);
+      
+          
+      http.open("POST", url, true);
+    
+      //Send the proper header information along with the request
+      http.setRequestHeader("Content-type", "application/x-www-form-urlencoded;");
+    
+      //Call a function when the state changes.
+      http.onreadystatechange = function() {
+          if (http.readyState==4) {
+          
+            //console.log(http.responseText);
+            
+            if(http.responseText.indexOf("error:") != -1)
+            {
+              //var lists = JSON.parse(http.responseText);
+              console.log(http.responseText);
+              callback({all_infos:[]});
+            }
+              
+            else
+            {
+              var lists = JSON.parse(http.responseText);
+              //console.log(lists);
+              callback(lists);
+              //callback(http.responseText);
+            }
+              
+    
+            
+            
+          
+          }
+      } // end callback
+    
+      http.send(params);
+}
+
+function update_bgm()
+{
+    get_description(function(rst){
+
+        if(rst =="")
+        {
+            return;
+        }
+        console.log(rst.desc);
+        var bgmId = rst.desc;
+
+        change_youtube_src(bgmId);
+
+        /*
+        if(current_bgmId != bgmId)
+        {
+            current_bgmId = bgmId;
+            change_youtube_src(bgmId);
+        }
+        */
+
+    })
+}
+
+function update_contents(data)
+{
+
+    console.log(data);
+    
+    var img_url = data.thumb_contentUrl;
+    document.getElementById("imgurl").src = img_url;
+
+    if(options.show_qrcode)
+    {
+        
+        document.getElementById("qrcode").innerHTML  = "";
+        new QRCode(document.getElementById("qrcode"), options.qr_url);
+        document.getElementById("qrcode").style.visibility = "visible";
+    }
+    if(options.show_msg && options.show_name)
+    {
+        try
+        {
+            var msg = data.msg;
+            //console.log(msg);
+            var name = data.Name;
+            //console.log(name);
+            document.getElementById("msg").innerHTML = msg + ":"+name;
+            document.getElementById("msg").style.visibility = "visible";
+            
+        }
+        catch(err)
+        {
+            console.log(err.message);
+            //document.getElementById("msg").innerHTML = err.message;
+        }
+    }
+    else if(!options.show_msg && options.show_name)
+    {
+
+        try
+        {
+            var name = data.Name;
+            //console.log(name);
+           
+            document.getElementById("msg").innerHTML = name;
+            document.getElementById("msg").style.visibility = "visible";
+            
+        }
+        catch(err)
+        {
+            console.log(err.message);
+            //document.getElementById("msg").innerHTML = err.message;
+        }
+    }
+    else if(options.show_msg && !options.show_name)
+    {
+        try
+        {
+            var msg = data.msg;
+            //console.log(msg);
+           
+            document.getElementById("msg").innerHTML = msg;
+            document.getElementById("msg").style.visibility = "visible";
+            
+        }
+        catch(err)
+        {
+            console.log(err.message);
+            //document.getElementById("msg").innerHTML = err.message;
+        }
+    }
+
+    if(options.show_reply)
+    {
+        try
+        {
+            var replies = data.reply;
+            //console.log(reply);
+
+            //replies = JSON.parse(replies);
+            //console.log(replies);
+            
+            
+            var all_replies = [];
+            for (let key in replies) {
+                //console.log(key, replies[key]);
+
+                all_replies.push(key) ;
+
+            }
+
+            var idx = 0;
+
+            if(all_replies.length > 0)
+            {
+                document.getElementById("marquee_container").style.visibility = "visible";
+                var cur_reply = replies[all_replies[idx]].reply;
+                document.getElementById("replies").innerHTML = cur_reply ;
+                idx ++;
+                setInterval(() => {
+                    if(idx == (all_replies.length))
+                    {
+                        idx = 0;
+                    }
+                    
+
+                    cur_reply = replies[all_replies[idx]].reply;
+                    document.getElementById("replies").innerHTML = cur_reply ;
+                    idx++;
+
+                        
+                }, 3000);
+            
+                
+            }
+            else
+            {
+                document.getElementById("marquee_container").style.visibility = "hidden";
+            }
+            
+            
+        }
+        catch(err)
+        {
+            //document.getElementById("replies").innerHTML = err.message;
+        }
+    }
+
+   
+}
+window.onload = function()
+{
+
+  
+
+    var url_string = window.location.href
+    //console.log(url_string);
+    var url = new URL(url_string);
+
+    deckId = url.searchParams.get("deckId");
+    current_slideId = url.searchParams.get("slideId");
+    console.log("current slideId", current_slideId);
+    //update_bgm();
+    var img_url = url.searchParams.get("img");
+    //console.log(img_url);
+
+    
+    var img = document.getElementById("imgurl");
+
+    
+    options = url.searchParams.get("options");
+    console.log(options);
+
+    options = JSON.parse(options);
+    //console.log(options);
+
+    var use_blur = options.show_blur;
+    
+
+    if(use_blur)
+    {
+        document.getElementById("myblur").src = img_url;
+    }
+        
+    img.onload = function() {
+        
+        //console.log("img loaded");
+        img_loaded = true;
+        img.style.visibility = "visible";
+
+        img.style.cursor = "pointer";
+        $('.main_img').click(function (e){
+
+            var elm = $(this);
+            var xPos = e.pageX - elm.offset().left;
+
+            if((elm.width() / 2) >= xPos){
+                //alert("left");
+
+                parent.move_slide("prev");
+            } else {
+                //alert("right");
+                parent.move_slide("next");
+            }
+
+        });
+
+
+        if(use_blur)
+        {
+            document.getElementById("myblur").style.visibility = "visible";
+        }
+        
+    
+    
+    };
+    
+    
+  
+
+    //console.log(img_url);
+    img.src = img_url;
+    
+
+    
+    if(options.show_qrcode)
+    {
+        
+        document.getElementById("qrcode").innerHTML  = "";
+        new QRCode(document.getElementById("qrcode"), options.qr_url);
+        document.getElementById("qrcode").style.visibility = "visible";
+    }
+    if(options.show_msg && options.show_name)
+    {
+        try
+        {
+            var msg = url.searchParams.get("msg");
+            //console.log(msg);
+            var name = url.searchParams.get("name");
+            //console.log(name);
+            document.getElementById("msg").innerHTML = msg + ":"+name;
+            document.getElementById("msg").style.visibility = "visible";
+            
+        }
+        catch(err)
+        {
+            console.log(err.message);
+            //document.getElementById("msg").innerHTML = err.message;
+        }
+    }
+    else if(!options.show_msg && options.show_name)
+    {
+
+        try
+        {
+            var name = url.searchParams.get("name");
+            //console.log(name);
+           
+            document.getElementById("msg").innerHTML = name;
+            document.getElementById("msg").style.visibility = "visible";
+            
+        }
+        catch(err)
+        {
+            console.log(err.message);
+            //document.getElementById("msg").innerHTML = err.message;
+        }
+    }
+    else if(options.show_msg && !options.show_name)
+    {
+        try
+        {
+            var msg = url.searchParams.get("msg");
+            //console.log(msg);
+           
+            document.getElementById("msg").innerHTML = msg;
+            document.getElementById("msg").style.visibility = "visible";
+            
+        }
+        catch(err)
+        {
+            console.log(err.message);
+            //document.getElementById("msg").innerHTML = err.message;
+        }
+    }
+
+    if(options.show_reply)
+    {
+        try
+        {
+            var replies = url.searchParams.get("replies");
+            //console.log(reply);
+
+            replies = JSON.parse(replies);
+            //console.log(replies);
+            
+            
+            var all_replies = [];
+            for (let key in replies) {
+                //console.log(key, replies[key]);
+
+                all_replies.push(key) ;
+
+            }
+
+            var idx = 0;
+
+            if(all_replies.length > 0)
+            {
+                document.getElementById("marquee_container").style.visibility = "visible";
+                var cur_reply = replies[all_replies[idx]].reply;
+                document.getElementById("replies").innerHTML = cur_reply ;
+                idx ++;
+                setInterval(() => {
+                    if(idx == (all_replies.length))
+                    {
+                        idx = 0;
+                    }
+                    
+
+                    cur_reply = replies[all_replies[idx]].reply;
+                    document.getElementById("replies").innerHTML = cur_reply ;
+                    idx++;
+
+                        
+                }, 3000);
+            
+                
+            }
+            
+            
+        }
+        catch(err)
+        {
+            //document.getElementById("replies").innerHTML = err.message;
+        }
+    }
+
+   
+    var img_loaded = false;
+    setTimeout(() => {
+        get_all_slideIDs(function(info)
+        {
+
+                
+            
+            var slideIDs = info.slideIDs;
+            //console.log(slideIDs);
+            //return;
+
+            if(slideIDs.length ==0)
+            {
+                return;
+            }
+
+
+            var i = 0;
+
+            //current_slideId
+
+            for(var idx = 0; idx <slideIDs.length;idx++)
+            {
+                if(slideIDs[idx] == current_slideId)
+                {
+                    i = idx;
+                    break;
+                }
+            }
+
+            if(i == (slideIDs.length-1))
+            {
+                i = 0;
+            }
+            else
+            {
+                i++;
+            }
+
+            var try_cnt  =0;
+            var timer_loop = setInterval(() => {
+
+                if(!img_loaded && try_cnt <2)
+                {
+                    try_cnt++;
+
+                    return;
+                }
+
+                try_cnt = 0;
+                
+                img_loaded = false;
+                //document.getElementById("msg").innerHTML = slideIDs[i];
+                try
+                {
+                    get_incarved_in_one_slide(slideIDs[i],function(data)
+                    {
+
+                        //console.log(data);
+                        if(data.all_infos.length == 0 )
+                        {
+                            img_loaded = true;
+                            return;
+                        }
+                        var img_url = data.all_infos[0].thumb_contentUrl;
+
+                        if(typeof img_url === "undefined")
+                        {
+                            img_loaded = true;
+                            return;
+                        }
+                        //console.log(img_url);
+
+
+                        update_contents(data.all_infos[0]);
+                        //document.getElementById("imgurl").src = img_url;
+
+                    })
+                }
+                catch(err)
+                {
+                    img_loaded = true;
+                    console.log(err.message);
+                }
+                
+                i++;
+                if(i == slideIDs.length)
+                {
+                    i = 0;
+                }
+            }, 10000);
+
+
+            //check new bgm
+            var bgm_timer = setInterval(() => {
+                update_bgm();
+            }, 20000);
+            
+        })
+
+        
+
+    }, 3000);
+}
+ 
+ 
+function change_youtube_src(bgmId)
+{
+    if(!player_ready)
+    {
+        return;
+    }
+    
+    if(bgmId == current_bgmId)
+    {
+        return;
+    }
+
+    current_bgmId = bgmId;
+    player.loadVideoById(bgmId,1,"medium");
+    player.playVideo();
+    
+    return;
+    var src = "//www.youtube.com/embed/"+bgmId+"?loop=1&enablejsapi=1&playlist="+bgmId
+    document.getElementById("background_music_iframe").src = src;
+
+}
+
+</script>
+
+<!--<iframe id="background_music_iframe" class="d-none1" width="100%" src="//www.youtube.com/embed/CcAqoRmQWhA?loop=1&enablejsapi=1&playlist=CcAqoRmQWhA"  frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>-->
+<iframe id="background_music_iframe" class="d-none1" width="100%" src="//www.youtube.com/embed/CcAqoRmQWhA?loop=1&enablejsapi=1&playlist=CcAqoRmQWhA"  frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<script src="http://www.youtube.com/player_api"></script>
+<!--<script src="https://www.youtube.com/iframe_api"></script>-->
+<script src="/main/js/yestoslide_db_search.js" type="text/javascript"></script> 
+
+<script>
+ 
+ var tag = document.createElement('script');
+
+  tag.src = "https://www.youtube.com/iframe_api";
+  var firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    var player;
+    
+    
+    function onYouTubePlayerAPIReady() {
+            console.log("set player");
+            player = new YT.Player('background_music_iframe', {
+                height: '200',
+                width: '200',
+                playerVars: {
+                    'controls': 0,           
+                    'showinfo': 0,
+                    'rel': 0,
+                    'loop': 1
+
+                },
+                //videoId: 'CcAqoRmQWhA',
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+
+        
+        
+    }
+
+    // autoplay video
+    var player_ready = false;
+    function onPlayerReady(event) {
+    
+        console.log("ready ");
+        player_ready = true;
+        change_youtube_src("CcAqoRmQWhA");   
+        //update_bgm();
+        //event.target.playVideo();
+
+        return;
+        setTimeout(() => {
+            player.pauseVideo(); 
+            setTimeout(() => {
+            player.playVideo(); 
+            }, 5000);
+        }, 5000);
+
+
+
+    }
+
+    // when video ends
+    function onPlayerStateChange(event) {        
+        if(event.data === 0) {            
+            //alert('done');
+            player.playVideo(); 
+        }
+    }
+        
+    </script>
+</body>
+
+</html>

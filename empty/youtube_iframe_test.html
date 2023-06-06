@@ -1,0 +1,38 @@
+<!--<iframe id="player" type="text/html" width="200" height="200" src="//www.youtube.com/embed/CMm6tDavSXg?mute=1&enablejsapi=1"></iframe>-->
+<iframe id="background_music_iframe" type="text/html" width="200" height="200" src="//www.youtube.com/embed/CcAqoRmQWhA?autoplay=1&loop=1&enablejsapi=1&playlist=CcAqoRmQWhA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<script src="http://www.youtube.com/player_api"></script>
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+ 
+
+var player;
+
+
+    function onYouTubePlayerAPIReady() {
+        player = new YT.Player('background_music_iframe', {
+          height: '200',
+          width: '200',
+    //videoId: 'CMm6tDavSXg',
+          events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
+          }
+        });
+    }
+
+    // autoplay video
+    function onPlayerReady(event) {
+    
+      alert("dd");
+        event.target.playVideo();
+    }
+
+    // when video ends
+    function onPlayerStateChange(event) {        
+        if(event.data === 0) {            
+            alert('done');
+        }
+    }
+    
+</script>
+

@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+    margin: 0;
+}
+.image-holder {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+}
+    </style>
+   
+</head>
+<body style="background-color: black;">
+    <div class="image-holder" style="position: relative;">
+            <img id="imgurl"  src="./hourglass.svg" alt="kitten" />
+            <div id="msg" style="visibility: hidden; position: absolute;top:0px; background-color: #000;color: #fff;opacity: .5;"></div>
+            <div id="marquee_container" style="visibility: hidden; position: absolute;bottom:10px;left:30%;right:30%; background-color: #000;color: #fff;opacity: .5;">
+                <marquee width="100%" direction="right" id="replies"></marquee>
+                
+            </div>
+            
+            
+    </div>
+    
+    <script type="text/javascript">
+        document.querySelector('img').onclick = () => {alert('you pet the kitten.')}
+
+        window.onload = function()
+        {
+            var url_string = window.location.href
+            var url = new URL(url_string);
+            var img_url = url.searchParams.get("img");
+            console.log(img_url);
+            document.getElementById("imgurl").src = img_url;
+
+            var options = url.searchParams.get("options");
+            options = JSON.parse(options);
+            console.log(options);
+            if(options.show_msg)
+            {
+                try
+                {
+                    var msg = url.searchParams.get("msg");
+                    console.log(msg);
+                    var email = url.searchParams.get("email");
+                    console.log(email);
+                    document.getElementById("msg").innerHTML = msg + ":"+email;
+                    document.getElementById("msg").style.visibility = "visible";
+                    
+                }
+                catch(err)
+                {
+                    //document.getElementById("msg").innerHTML = err.message;
+                }
+            }
+
+            if(options.show_reply)
+            {
+                try
+                {
+                    var replies = url.searchParams.get("replies");
+                    //console.log(reply);
+
+                    replies = JSON.parse(replies);
+                    //console.log(replies);
+                    
+                    
+                    var all_replies = [];
+                    for (let key in replies) {
+                        console.log(key, replies[key]);
+
+                        all_replies.push(key) ;
+
+                    }
+
+                    var idx = 0;
+
+                    if(all_replies.length > 0)
+                    {
+                        document.getElementById("marquee_container").style.visibility = "visible";
+                        var cur_reply = replies[all_replies[idx]].reply;
+                        document.getElementById("replies").innerHTML = cur_reply ;
+                        idx ++;
+                        setInterval(() => {
+                            if(idx == (all_replies.length))
+                            {
+                                idx = 0;
+                            }
+                            
+
+                            cur_reply = replies[all_replies[idx]].reply;
+                            document.getElementById("replies").innerHTML = cur_reply ;
+                            idx++;
+
+                                
+                        }, 3000);
+                    
+                        
+                    }
+                    
+                    
+                }
+                catch(err)
+                {
+                    //document.getElementById("replies").innerHTML = err.message;
+                }
+            }
+
+           
+           
+            
+            
+        }
+    </script>
+
+
+</body>
+</html>
